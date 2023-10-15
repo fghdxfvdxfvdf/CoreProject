@@ -79,15 +79,13 @@ class Birthday(Field):
 class Email(Field):
     @Field.value.setter
     def value(self, value):
-        if value is None:
-            self._value = value
+        self._value = value
 
 
 class Address(Field):
     @Field.value.setter
     def value(self, value):
-        if value is None:
-            self._value = value
+        self._value = value
 
 
 class Record:
@@ -133,8 +131,8 @@ class Record:
             return 'вже є'
     
     def add_email(self, email):
-            self.email = Email(email)
-            return 'Email додано'
+        self.email = Email(email)
+        return 'Email додано'
         
     def add_address(self, address):
         self.address.value = Address(address)
@@ -156,6 +154,9 @@ class Record:
         if self.birthday.value is None and self.address.value is not None and self.email.value is not None :
             return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
                     f"\n\taddress: {self.address}, email: {self.email}\n")
+        if self.birthday.value is None and self.address.value is not None and self.email.value is None :
+            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
+                    f"\n\taddress: {self.address}\n")
         if self.birthday.value is None and self.address.value is None and self.email.value is not None :
             return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
                     f"\n\temail: {self.email}\n")
