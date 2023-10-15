@@ -111,6 +111,15 @@ def show_all(*args):
 
     return result
 
+@input_error
+def birthday(*args):
+    if len(args[1]) == 0:
+        days = 7
+    elif args[1].isdigit():
+        days = args[1]
+    else:
+        raise ValueError('Ви ввели не число')
+    return phonebook.find_birthday_boy(days)
 
 # Декорована функція для видалення контакту
 @input_error

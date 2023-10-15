@@ -59,8 +59,9 @@ class App(customtkinter.CTk):
                                                         fg_color=('green', 'black'), hover_color='purple',
                                                         font=('Arial bold', 16), command=self.sort_files_app)
         self.btn_sorted_files.grid(row=5, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
-        self.btn_ok = customtkinter.CTkButton(self.btn_frame, text='Дні народження на тижні', text_color='yellow',
-                                              fg_color=('green', 'black'), hover_color='purple', font=('Arial bold', 16))
+        self.btn_ok = customtkinter.CTkButton(self.btn_frame, text='Іменинники', text_color='yellow',
+                                              fg_color=('green', 'black'), hover_color='purple', font=('Arial bold', 16),
+                                              command=self.find_birthday_boy_app)
         self.btn_ok.grid(row=6, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
 
         self.out_frame = customtkinter.CTkFrame(self)
@@ -144,6 +145,14 @@ class App(customtkinter.CTk):
             except FileNotFoundError:
                 self.lbl.configure(text="Такої папки не існує або не вірний шлях")
         self.entry_input.delete('0', 'end')
+
+    def find_birthday_boy_app(self):
+        self.entry_input.focus()
+        value = self.entry_input.get()
+        self.entry_input.delete('0', 'end')
+        self.out_text.delete('1.0', 'end')
+        self.lbl.configure(text='Показує на найближчі 7 днів.\nВведіть кількість днів та натисніть кнопку "Іменинники"')
+        self.out_text.insert('1.0', birthday('birthday', value))
 
 
 def main():
