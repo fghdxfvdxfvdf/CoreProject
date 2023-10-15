@@ -1,5 +1,4 @@
-from func import *
-import tkinter
+from CoreProject.func import *
 import customtkinter
 import my_calendar_frame
 

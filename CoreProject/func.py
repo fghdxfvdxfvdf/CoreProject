@@ -1,5 +1,5 @@
 import pickle
-from classes import *
+from CoreProject.classes import *
 
 
 def input_error(func):
