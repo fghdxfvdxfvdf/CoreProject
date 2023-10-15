@@ -85,6 +85,7 @@ class App(customtkinter.CTk):
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
         list_value = value.split()
+        print(list_value)
         self.lbl.configure(text=add('add', *list_value))
         self.entry_input.delete('0', 'end')
         self.lbl_count.configure(text=f'{len(phonebook)} контактів')
