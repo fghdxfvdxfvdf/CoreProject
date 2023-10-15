@@ -58,10 +58,10 @@ class App(customtkinter.CTk):
         self.btn_sorted_files = customtkinter.CTkButton(self.btn_frame, text='Сортувати файли', text_color='yellow',
                                                         fg_color=('green', 'black'), hover_color='purple',
                                                         font=('Arial bold', 16), command=self.sort_files_app)
-        self.btn_sorted_files.grid(row=4, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
+        self.btn_sorted_files.grid(row=5, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
         self.btn_ok = customtkinter.CTkButton(self.btn_frame, text='Дні народження на тижні', text_color='yellow',
                                               fg_color=('green', 'black'), hover_color='purple', font=('Arial bold', 16))
-        self.btn_ok.grid(row=5, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
+        self.btn_ok.grid(row=6, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
 
         self.out_frame = customtkinter.CTkFrame(self)
         self.out_frame.grid(row=1, column=1, padx=(20, 20), pady=(10, 10), sticky='nsew', rowspan=3)
@@ -125,7 +125,7 @@ class App(customtkinter.CTk):
         self.lbl_count.configure(text=f'{len(phonebook)} контактів')
 
     def show_all_app(self):
-        self.entry_input.focus()
+        self.entry_input.delete('0', 'end')
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
         list_value = value.split()

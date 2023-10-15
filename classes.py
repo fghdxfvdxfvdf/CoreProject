@@ -26,7 +26,7 @@ class Name(Field):
         if 2 < len(value) < 15:
             self._value = value
         else:
-            raise ValueError('Name must be from 3 to 15 characters')
+            raise ValueError("Ім'я повинно бути від 3 до 15 символів")
 
 
 class Phone(Field):
@@ -38,7 +38,8 @@ class Phone(Field):
         elif len(value) == 10 and value.isdigit():
             self._value = value
         else:
-            raise ValueError
+            raise ValueError('Номер телефону має бути: код_оператора ХХХХХХ\nКод оператора: 067, 050, 068, 096, 097,'
+                             '098, 063, 093, 099, 095')
 
 
 class Birthday(Field):
@@ -62,14 +63,14 @@ class Birthday(Field):
                     else:
                         max_day = 28
                 else:
-                    raise ValueError('Wrong month')
+                    raise ValueError('Невірний місяць')
 
                 if 1 <= day <= max_day:
                     self._value = datetime(year, month, day).date()
                 else:
-                    raise ValueError('Incorrect day? month or year values')
+                    raise ValueError(f"В {month} місяці від 1 до {max_day} днів")
             else:
-                raise ValueError('Incorrect date format')
+                raise ValueError('Невірний формат дати')
 
     def __str__(self):
         return f"{self._value.strftime('%d.%m.%Y')}"
@@ -101,7 +102,7 @@ class Record:
                 index = self.phones.index(phone)
                 self.phones[index] = Phone(new_number)
                 return
-        raise ValueError
+        raise ValueError('Такого номеру немає у контакта')
 
     def find_phone(self, num):
         for phone in self.phones:
@@ -153,6 +154,8 @@ class AddressBook(UserDict):
             yield page
 
     def find_match(self, string):
+        if not self.data:
+            return f'Немає жодного контакту'                       # Якщо немає контактів
         result = ''
         for record in self.data.values():
             if string.lower() in record.name.value.lower():
@@ -165,5 +168,5 @@ class AddressBook(UserDict):
             if record.birthday.value is not None and string in str(record.birthday.value):
                 result += f'{record}\n'
         if len(result) == 0:
-            return 'Nothing found'
+            return 'Нічого не знайдено'
         return result
