@@ -133,11 +133,12 @@ class Record:
             return 'вже є'
     
     def add_email(self, email):
-        if self.email.value is None:
             self.email = Email(email)
-            return 'email додано'
-        else:
-            return 'email вже є'
+            return 'Email додано'
+        
+    def add_address(self, address):
+        self.address.value = Address(address)
+        return 'Адреса була додана'
 
     def days_to_birthday(self):
         today = date.today()
@@ -149,9 +150,15 @@ class Record:
         return delta.days
 
     def __str__(self):
-        if self.birthday.value is not None:
+        if self.birthday.value is not None and self.address.value is not None and self.email.value is not None :
             return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\tbirthday: {self.birthday}, email: {self.email}, days to birthday: {self.days_to_birthday()}\n")
+                    f"\n\tbirthday: {self.birthday}, address: {self.address}, email: {self.email}, days to birthday: {self.days_to_birthday()}\n")
+        if self.birthday.value is None and self.address.value is not None and self.email.value is not None :
+            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
+                    f"\n\taddress: {self.address}, email: {self.email}\n")
+        if self.birthday.value is None and self.address.value is None and self.email.value is not None :
+            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
+                    f"\n\temail: {self.email}\n")
         return f"{self.name.value}:\n\tPhone:{'; '.join(p.value for p in self.phones)}\n"
 
 
