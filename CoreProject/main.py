@@ -1,7 +1,7 @@
 from CoreProject.func import *
 import customtkinter
 import my_calendar_frame
-import sorted_files
+from CoreProject import sorted_files
 
 
 def change_theme_menu(new_appearance):
