@@ -1,6 +1,7 @@
 from CoreProject.func import *
 import customtkinter
 import my_calendar_frame
+import sorted_files
 
 
 def change_theme_menu(new_appearance):
@@ -13,7 +14,9 @@ class App(customtkinter.CTk):
         customtkinter.set_default_color_theme('green')
         self.geometry('1200x850')
         self.title('My phonebook')
-        self.resizable(False, False)
+        # self.resizable(False, False)
+        self.grid_rowconfigure(2, weight=1)
+        self.grid_columnconfigure(1, weight=1)
 
         self.first_frame = customtkinter.CTkFrame(self)
         self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
@@ -29,9 +32,8 @@ class App(customtkinter.CTk):
                                                 text_color=('black', 'beige'))
         self.lbl_count.grid(row=3, column=0, pady=(10, 10), sticky='nsew')
 
-        # self.btn_frame = customtkinter.CTkFrame(self)
         self.btn_frame = customtkinter.CTkFrame(self)
-        self.btn_frame.grid(row=0, column=0, pady=(20, 20))
+        self.btn_frame.grid(row=0, column=0, rowspan=2, pady=(20, 20))
         self.btn_add = customtkinter.CTkButton(self.btn_frame, text='Додати', text_color='yellow',
                                                fg_color=('green', 'black'), hover_color='purple', font=('Arial bold', 16),
                                                command=self.added)
@@ -50,21 +52,23 @@ class App(customtkinter.CTk):
         self.btn_find.grid(row=3, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
         self.btn_find = customtkinter.CTkButton(self.btn_frame, text='Показати всі', text_color='yellow',
                                                 fg_color=('green', 'black'), hover_color='purple',
-                                                font=('Arial bold', 16),
-                                                command=self.show_all_app)
+                                                font=('Arial bold', 16), command=self.show_all_app)
         self.btn_find.grid(row=4, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
-        self.btn_ok = customtkinter.CTkButton(self.btn_frame, text='Дні народження на тижні',
-                                              text_color='yellow',
+        self.btn_sorted_files = customtkinter.CTkButton(self.btn_frame, text='Сортувати файли', text_color='yellow',
+                                                        fg_color=('green', 'black'), hover_color='purple',
+                                                        font=('Arial bold', 16), command=self.sort_files_app)
+        self.btn_sorted_files.grid(row=5, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
+        self.btn_ok = customtkinter.CTkButton(self.btn_frame, text='Дні народження на тижні', text_color='yellow',
                                               fg_color=('green', 'black'), hover_color='purple', font=('Arial bold', 16))
-        self.btn_ok.grid(row=5, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
+        self.btn_ok.grid(row=6, column=0, padx=(25, 25), pady=(15, 15), sticky='ew')
 
         self.out_frame = customtkinter.CTkFrame(self)
-        self.out_frame.grid(row=1, column=1, padx=(20, 20), pady=(10, 10), sticky='nsew', rowspan=2)
-        self.out_text = customtkinter.CTkTextbox(self.out_frame, font=('Arial bold', 20), width=880, height=410)
+        self.out_frame.grid(row=1, column=1, padx=(20, 20), pady=(10, 10), sticky='nsew', rowspan=3)
+        self.out_text = customtkinter.CTkTextbox(self.out_frame, font=('Arial bold', 20), width=880, height=450)
         self.out_text.grid(row=0, column=0, padx=(20, 20), pady=(10, 10), sticky='nsew')
 
         self.menu_frame = customtkinter.CTkFrame(self, border_color='black')
-        self.menu_frame.grid(row=1, column=0, padx=(0, 20))
+        self.menu_frame.grid(row=2, column=0, padx=(0, 20), pady=(0, 20))
         self.appearance_menu = customtkinter.CTkOptionMenu(self.menu_frame, values=['Light', 'Dark', 'System'],
                                                            command=change_theme_menu, fg_color=('green', 'black'),
                                                            text_color='yellow', font=('Arial bold', 16))
@@ -72,7 +76,7 @@ class App(customtkinter.CTk):
         self.appearance_menu.set('System')
 
         self.calendar_frame = my_calendar_frame.MyCalendar(self)
-        self.calendar_frame.grid(row=2, column=0, padx=(20, 0))
+        self.calendar_frame.grid(row=3, column=0, padx=(20, 0), pady=(0, 20))
 
     def added(self):
         self.entry_input.focus()
@@ -120,12 +124,25 @@ class App(customtkinter.CTk):
         self.lbl_count.configure(text=f'{len(phonebook)} контактів')
 
     def show_all_app(self):
-        self.entry_input.focus()
+        self.entry_input.delete('0', 'end')
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
         list_value = value.split()
         self.lbl.configure(text="")
         self.out_text.insert('1.0', show_all('show all', *list_value))
+
+    def sort_files_app(self):
+        self.entry_input.focus()
+        self.out_text.delete('1.0', 'end')
+        value = self.entry_input.get()
+        if len(value) == 0:
+            self.lbl.configure(text="Введіть повний шлях до папки")
+        else:
+            try:
+                self.lbl.configure(text=sorted_files.sorted_files(value))
+            except FileNotFoundError:
+                self.lbl.configure(text="Такої папки не існує або не вірний шлях")
+        self.entry_input.delete('0', 'end')
 
 
 def main():
