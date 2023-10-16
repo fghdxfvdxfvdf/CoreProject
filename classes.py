@@ -79,13 +79,19 @@ class Birthday(Field):
 class Email(Field):
     @Field.value.setter
     def value(self, value):
-        self._value = value
+        if value is None:
+            self._value = value
+        else:
+            self._value = value
 
 
 class Address(Field):
     @Field.value.setter
     def value(self, value):
-        self._value = value
+        if value is None:
+            self._value = value
+        else:
+            self._value = value
 
 
 class Record:
@@ -148,19 +154,16 @@ class Record:
         return delta.days
 
     def __str__(self):
-        if self.birthday.value is not None and self.address.value is not None and self.email.value is not None :
-            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\tbirthday: {self.birthday}, address: {self.address}, email: {self.email}, days to birthday: {self.days_to_birthday()}\n")
-        if self.birthday.value is None and self.address.value is not None and self.email.value is not None :
-            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\taddress: {self.address}, email: {self.email}\n")
-        if self.birthday.value is None and self.address.value is not None and self.email.value is None :
-            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\taddress: {self.address}\n")
-        if self.birthday.value is None and self.address.value is None and self.email.value is not None :
-            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\temail: {self.email}\n")
-        return f"{self.name.value}:\n\tPhone:{'; '.join(p.value for p in self.phones)}\n"
+        result = f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
+        
+        if self.birthday.value is not None:
+            result += f'\nbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n'
+        if self.address.value is not None:
+            result += f'address: {self.address} '
+        if self.email.value is not None:
+            result += f'email: {self.email}'
+        
+        return result
 
 
 class AddressBook(UserDict):
