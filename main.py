@@ -33,6 +33,38 @@ class App(customtkinter.CTk):
                                                 text_color=('black', 'beige'))
         self.lbl_count.grid(row=3, column=0, pady=(10, 10), sticky='nsew')
 
+        self.second_frame = customtkinter.CTkFrame(self)
+        self.lbl_name = customtkinter.CTkLabel(self.second_frame, text="Ім'я", font=('Arial bold', 20),
+                                               text_color=('black', 'beige'))
+        self.lbl_name.grid(row=0, column=0, padx=20, pady=10, sticky='ew')
+        self.lbl_phone = customtkinter.CTkLabel(self.second_frame, text='Телефон', font=('Arial bold', 20),
+                                                text_color=('black', 'beige'))
+        self.lbl_phone.grid(row=1, column=0, padx=20, pady=10, sticky='ew')
+        self.lbl_birthday = customtkinter.CTkLabel(self.second_frame, text='Дата народження', font=('Arial bold', 20),
+                                                   text_color=('black', 'beige'))
+        self.lbl_birthday.grid(row=2, column=0, padx=(20, 10), pady=10, sticky='ew')
+        self.lbl_email = customtkinter.CTkLabel(self.second_frame, text='Email', font=('Arial bold', 20),
+                                                text_color=('black', 'beige'))
+        self.lbl_email.grid(row=3, column=0, padx=20, pady=10, sticky='ew')
+        self.lbl_address = customtkinter.CTkLabel(self.second_frame, text='Адреса', font=('Arial bold', 20),
+                                                  text_color=('black', 'beige'))
+        self.lbl_address.grid(row=4, column=0, padx=20, pady=10, sticky='ew')
+        # self.lbl_name.grid_remove()
+        self.entry_name = customtkinter.CTkEntry(self.second_frame, font=('Arial bold', 20), width=720)
+        self.entry_name.grid(row=0, column=1, padx=(0, 20), pady=10, sticky='ew')
+        self.entry_phone = customtkinter.CTkEntry(self.second_frame, font=('Arial bold', 20), width=720)
+        self.entry_phone.grid(row=1, column=1, padx=(0, 20), pady=10, sticky='ew')
+        self.entry_birthday = customtkinter.CTkEntry(self.second_frame, font=('Arial bold', 20), width=720)
+        self.entry_birthday.grid(row=2, column=1, padx=(0, 20), pady=10, sticky='ew')
+        self.entry_email = customtkinter.CTkEntry(self.second_frame, font=('Arial bold', 20), width=720)
+        self.entry_email.grid(row=3, column=1, padx=(0, 20), pady=10, sticky='ew')
+        self.entry_address = customtkinter.CTkEntry(self.second_frame, font=('Arial bold', 20), width=720)
+        self.entry_address.grid(row=4, column=1, padx=(0, 20), pady=10, sticky='ew')
+        self.btn_enter = customtkinter.CTkButton(self.second_frame, text='ok', text_color='yellow',
+                                                 fg_color=('dark green', 'black'), hover_color='purple',
+                                                 font=('Arial bold', 16), command=self.enter_app)
+        self.btn_enter.grid(row=5, column=0, columnspan=2, pady=10)
+
         self.btn_frame = customtkinter.CTkFrame(self)
         self.btn_frame.grid(row=0, column=0, rowspan=2, pady=(20, 20))
         self.btn_add = customtkinter.CTkButton(self.btn_frame, text='Додати', text_color='yellow',
@@ -81,16 +113,31 @@ class App(customtkinter.CTk):
         self.calendar_frame.grid(row=3, column=0, padx=(20, 0), pady=(0, 20))
 
     def added(self):
-        self.entry_input.focus()
         self.out_text.delete('1.0', 'end')
-        value = self.entry_input.get()
-        list_value = value.split()
-        print(list_value)
-        self.lbl.configure(text=add('add', *list_value))
         self.entry_input.delete('0', 'end')
+        self.first_frame.grid_remove()
+        self.second_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
+
+    def enter_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
+        input_value = {'name': self.entry_name.get(),
+                       'phone': self.entry_phone.get(),
+                       'birthday': self.entry_birthday.get(),
+                       'email': self.entry_email.get(),
+                       'address': self.entry_address.get()}
+
+        self.lbl.configure(text=add('add', **input_value))
+        self.entry_name.delete('0', 'end')
+        self.entry_phone.delete('0', 'end')
+        self.entry_birthday.delete('0', 'end')
+        self.entry_email.delete('0', 'end')
+        self.entry_address.delete('0', 'end')
         self.lbl_count.configure(text=f'{len(phonebook)} контактів')
 
     def change_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.focus()
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
@@ -102,6 +149,8 @@ class App(customtkinter.CTk):
         self.entry_input.delete('0', 'end')
 
     def show_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.focus()
         self.lbl.configure(text="")
         self.out_text.delete('1.0', 'end')
@@ -114,6 +163,8 @@ class App(customtkinter.CTk):
         self.entry_input.delete('0', 'end')
 
     def delete_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.focus()
         self.lbl.configure(text="Для видалення контакту введіть ім'я.\nДля видалення номеру введіть ім'я та номер")
         self.out_text.delete('1.0', 'end')
@@ -127,14 +178,18 @@ class App(customtkinter.CTk):
         self.lbl_count.configure(text=f'{len(phonebook)} контактів')
 
     def show_all_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.delete('0', 'end')
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
         list_value = value.split()
         self.lbl.configure(text="")
-        self.out_text.insert('1.0', show_all('show all', *list_value))
+        self.out_text.insert('1.0', show_all('show all'))
 
     def sort_files_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.focus()
         self.out_text.delete('1.0', 'end')
         value = self.entry_input.get()
@@ -148,6 +203,8 @@ class App(customtkinter.CTk):
         self.entry_input.delete('0', 'end')
 
     def find_birthday_boy_app(self):
+        self.second_frame.grid_remove()
+        self.first_frame.grid(row=0, column=1, padx=(20, 20), pady=(10, 10), sticky='ew')
         self.entry_input.focus()
         value = self.entry_input.get()
         self.entry_input.delete('0', 'end')
