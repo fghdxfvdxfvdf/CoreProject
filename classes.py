@@ -70,20 +70,22 @@ class Birthday(Field):
                 else:
                     raise ValueError(f"В {month} місяці від 1 до {max_day} днів")
             else:
-                raise ValueError('Невірний формат дати')
+                raise ValueError('Невірний формат дати. Введіть у форматі dd.mm.yyyy')
 
     def __str__(self):
         return f"{self._value.strftime('%d.%m.%Y')}"
 
 
 class Record:
-    def __init__(self, name, birthday=None):
-        self.birthday = Birthday(birthday)
+    def __init__(self, name, birthday=None, email=None, address=None):
         self.name = Name(name)  # застосування асоціації під назваю композиція. Об'єкт Name існує поки є об'єкт Record
+        self.birthday = Birthday(birthday)
         self.phones = []
 
     def add_phone(self, number):
-        if number in map(lambda num: num.value, self.phones):
+        if number is None:
+            return
+        elif number in map(lambda num: num.value, self.phones):
             return 'вже є у контакта'  # Якщо такий номер вже є у контакта
         else:
             self.phones.append(Phone(number))
@@ -128,7 +130,7 @@ class Record:
         if self.birthday.value is not None:
             return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
                     f"\n\tbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n")
-        return f"{self.name.value}:\n\tPhone:{'; '.join(p.value for p in self.phones)}\n"
+        return f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)}\n"
 
 
 class AddressBook(UserDict):
@@ -142,6 +144,8 @@ class AddressBook(UserDict):
         boys = []
         result = ''
         for record in self.data.values():
+            if record.birthday.value is None:
+                continue
             if record.days_to_birthday() <= int(days):
                 boys.append(record)
                 # result += f'{record}\n'
@@ -157,6 +161,7 @@ class AddressBook(UserDict):
         self.data.pop(name)
 
     def iterator(self, page_size):
+        print(self.data)
         keys = list(self.data.keys())
         total_pages = (len(keys) + page_size - 1) // page_size
         keys.sort()

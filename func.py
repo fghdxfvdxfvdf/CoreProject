@@ -29,22 +29,23 @@ def compiling_page(page_number, contacts, total):
 
 # Декорована функція для додавання нового контакту або оновлення існуючого.
 @input_error
-def add(*args):
-    if args[1] in phonebook.data:                              # Якщо контакт вже є
-        name_record = phonebook.find(args[1])                  # Знайдемо контакт за ім'ям
-        if '.' in args[2]:                                     # Якщо третім аргументом елемент дати
-            text = name_record.add_birthday(args[2])
-            return f'Дата народження {text}'                          # Повідомить про додавання дня народження
-        else:
-            result = name_record.add_phone(args[2])            # Додаємо новий номер, якщо контакт вже існує.
-            return f'Номер {args[2]} {result} {args[1]}'
-    if len(args) == 4:
-        name_record = Record(args[1], args[3])
+def add(*args, **kwargs):
+    print(kwargs)
+    for key in kwargs:
+        if len(kwargs[key].strip()) == 0:
+            kwargs[key] = None
+    if kwargs['name'] is None:
+        return f"Ви не ввели ім'я"
+    if kwargs['name'] in phonebook.data:                              # Якщо контакт вже є
+        name_record = phonebook.find(kwargs['name'])                  # Знайдемо контакт за ім'ям
+        name_record.add_phone(kwargs['phone'])
+        name_record.add_birthday(kwargs['birthday'])
+        return f'Контакту {kwargs["name"]} дані додані'
     else:
-        name_record = Record(args[1])
-    name_record.add_phone(args[2])
-    phonebook.add_record(name_record)
-    return f'Контакт {args[1]} з номером {args[2]} успішно додано'   # Повідомляємо користувача про успішне додавання.
+        name_record = Record(kwargs['name'], kwargs['birthday'], kwargs['email'], kwargs['address'])
+        name_record.add_phone(kwargs['phone'])
+        phonebook.add_record(name_record)
+        return f'Успішно додано контакт '
 
 
 # Декорована функція для зміни номера телефону контакту.
