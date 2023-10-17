@@ -118,10 +118,9 @@ class Record:
 
     def days_to_birthday(self):
         today = date.today()
-        current_year = today.year
-        if self.birthday.value < today:
-            current_year += 1
-        current_birthday = datetime(current_year, self.birthday.value.month, self.birthday.value.day).date()
+        current_birthday = datetime(today.year, self.birthday.value.month, self.birthday.value.day).date()
+        if current_birthday < today:
+            current_birthday = datetime(today.year + 1, self.birthday.value.month, self.birthday.value.day).date()
         delta = current_birthday - today
         return delta.days
 
@@ -133,11 +132,26 @@ class Record:
 
 
 class AddressBook(UserDict):
-    def add_record(self, user):  # асоціація під назвою агригація
+    def add_record(self, user: Record):  # асоціація під назвою агригація
         self.data[user.name.value] = user
 
     def find(self, name):
         return self.data.get(name)
+
+    def find_birthday_boy(self, days):
+        boys = []
+        result = ''
+        for record in self.data.values():
+            if record.days_to_birthday() <= int(days):
+                boys.append(record)
+                # result += f'{record}\n'
+        if len(boys) == 0:
+            result += f"Найближчі {days} днів іменинників немає"
+        else:
+            sorted_boys = sorted(boys, key=lambda record: record.days_to_birthday())
+            for record in sorted_boys:
+                result += f'{record}'
+        return result
 
     def delete(self, name):
         self.data.pop(name)
@@ -155,7 +169,7 @@ class AddressBook(UserDict):
 
     def find_match(self, string):
         if not self.data:
-            return f'Немає жодного контакту'                       # Якщо немає контактів
+            return f'Немає жодного контакту'  # Якщо немає контактів
         result = ''
         for record in self.data.values():
             if string.lower() in record.name.value.lower():
@@ -168,5 +182,5 @@ class AddressBook(UserDict):
             if record.birthday.value is not None and string in str(record.birthday.value):
                 result += f'{record}\n'
         if len(result) == 0:
-            return 'Нічого не знайдено'
+            result += 'Нічого не знайдено'
         return result
