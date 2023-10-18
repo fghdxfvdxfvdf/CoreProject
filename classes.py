@@ -76,11 +76,26 @@ class Birthday(Field):
         return f"{self._value.strftime('%d.%m.%Y')}"
 
 
+class Email(Field):
+    @Field.value.setter
+    def value(self, value):
+        if value is None:
+            self._value = value
+
+
+class Address(Field):
+    @Field.value.setter
+    def value(self, value):
+        if value is None:
+            self._value = value
+
 class Record:
     def __init__(self, name, birthday=None, email=None, address=None):
         self.name = Name(name)  # застосування асоціації під назваю композиція. Об'єкт Name існує поки є об'єкт Record
         self.birthday = Birthday(birthday)
         self.phones = []
+        self.email = Email(email)
+        self.address = Address(address)
 
     def add_phone(self, number):
         if number is None:
@@ -127,10 +142,16 @@ class Record:
         return delta.days
 
     def __str__(self):
+        result = f'{self.name.value}:\n\tPhone: {"; ".join(p.value for p in self.phones)}'
+        
         if self.birthday.value is not None:
-            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
-                    f"\n\tbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n")
-        return f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)}\n"
+            result += f'\nbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n'
+        if self.email.value is not None:
+            result += f'email: {self.email}'
+        if self.address.value is not None:
+            result += f'address: {self.address}'
+        
+        return result
 
 
 class AddressBook(UserDict):
