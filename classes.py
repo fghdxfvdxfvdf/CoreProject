@@ -76,26 +76,11 @@ class Birthday(Field):
         return f"{self._value.strftime('%d.%m.%Y')}"
 
 
-class Email(Field):
-    @Field.value.setter
-    def value(self, value):
-        if value is None:
-            self._value = value
-
-
-class Address(Field):
-    @Field.value.setter
-    def value(self, value):
-        if value is None:
-            self._value = value
-
 class Record:
     def __init__(self, name, birthday=None, email=None, address=None):
         self.name = Name(name)  # застосування асоціації під назваю композиція. Об'єкт Name існує поки є об'єкт Record
         self.birthday = Birthday(birthday)
         self.phones = []
-        self.email = Email(email)
-        self.address = Address(address)
 
     def add_phone(self, number):
         if number is None:
@@ -106,24 +91,27 @@ class Record:
             self.phones.append(Phone(number))
             return 'додано до контакту'
 
-    def remove_phone(self, number):
-        for p in self.phones:
-            if number == p.value:
-                self.phones.remove(p)
+    def remove_phone(self, phone: str = None):
+        if self.phones == []:
+            return None        
+        for phone in self.phones:
+            if phone.value == phone:
+                self.phones.remove(phone) 
                 return f'Номер {self.name.value} видалено'
         return f'{self.name.value} такого номеру не знайдено'
-
-    def edit_phone(self, old_number, new_number):
+    
+    def edit_phone(self, old_phone: str, new_phone: str):
         for phone in self.phones:
-            if phone.value == old_number:
-                index = self.phones.index(phone)
-                self.phones[index] = Phone(new_number)
+            if phone.value == old_phone:
+                phone.value = new_phone
                 return
         raise ValueError('Такого номеру немає у контакта')
-
-    def find_phone(self, num):
+    
+    def find_phone(self, phone: str = None):
+        if len(self.phones) == 0:
+            return None
         for phone in self.phones:
-            if phone.value == num:
+            if phone.value == phone:
                 return phone
 
     def add_birthday(self, birthday):
@@ -142,24 +130,21 @@ class Record:
         return delta.days
 
     def __str__(self):
-        result = f'{self.name.value}:\n\tPhone: {"; ".join(p.value for p in self.phones)}'
-        
         if self.birthday.value is not None:
-            result += f'\nbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n'
-        if self.email.value is not None:
-            result += f'email: {self.email}'
-        if self.address.value is not None:
-            result += f'address: {self.address}'
-        
-        return result
+            return (f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)} "
+                    f"\n\tbirthday: {self.birthday}, days to birthday: {self.days_to_birthday()}\n")
+        return f"{self.name.value}:\n\tPhone: {'; '.join(p.value for p in self.phones)}\n"
 
 
 class AddressBook(UserDict):
     def add_record(self, user: Record):  # асоціація під назвою агригація
         self.data[user.name.value] = user
 
-    def find(self, name):
-        return self.data.get(name)
+    def find(self, name: str):
+        for char in self.data:
+            if char == name:
+                return self.data[char]
+        return None 
 
     def find_birthday_boy(self, days):
         boys = []
@@ -178,9 +163,10 @@ class AddressBook(UserDict):
                 result += f'{record}'
         return result
 
-    def delete(self, name):
-        self.data.pop(name)
-
+    def delete(self, name: str):
+        result = self.data.pop(name, None)
+        return result is not None
+    
     def iterator(self, page_size):
         print(self.data)
         keys = list(self.data.keys())
